@@ -30,7 +30,7 @@ const PERSONAL_REAL = [
   { id: 1, nombre: "Soledad", apellido: "García", rol: "Operador Baños Clientes", turno: "Matutino", zona: "Baños 1er Nivel y P.B.", descanso: "Jueves", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: false } },
   { id: 2, nombre: "Ana", apellido: "López", rol: "Operador Crédito y Oficinas", turno: "Matutino", zona: "Depto. Crédito y Oficinas Gerentes", descanso: "Jueves", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: true } },
   { id: 3, nombre: "Norma Laura", apellido: "Martínez", rol: "Mopeador", turno: "Matutino", zona: "P.B. - That's It!, Hollister, American Eagle, Levi's", descanso: "Viernes", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: true } },
-  { id: 4, nombre: "Victoria", apellido: "Hernández", rol: "Mopeador", turno: "Matutino", zona: "P.B. - Deportes, Zapato, Dockers, Bolsas", descanso: "Martes", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: false, contrato: true, constancia: true } },
+  { id: 4, nombre: "Victoria", apellido: "Hernández", rol: "Mopeador", turno: "Matutino", zona: "P.B. - Deportes, Zapato, Dockers, Bolsas", descanso: "Martes", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: true } },
   { id: 5, nombre: "Janeth", apellido: "Ramírez", rol: "Mopeador", turno: "Matutino", zona: "P.B. - Petite, Studio F, Banana Republic", descanso: "Viernes", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: false } },
   { id: 6, nombre: "Gaudencia", apellido: "Ruiz", rol: "Mopeador", turno: "Matutino", zona: "P.B. - Calvin Klein, Julio, Tommy Hilfiger", descanso: "Miércoles", status: "activo", foto: "👩", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: true } },
   { id: 7, nombre: "Marcos", apellido: "Vásquez", rol: "Mopeador / Andenes", turno: "Matutino", zona: "P.B. - Cosméticos, Perfumería", descanso: "Miércoles", status: "activo", foto: "👨", docs: { ine: true, curp: true, nss: true, contrato: true, constancia: true } },
@@ -71,7 +71,6 @@ const ACTIVIDADES_REALES = {
   "Mantenimiento General": { frecuencia: "Según necesidad", areas: ["Toda la tienda"] },
 };
 
-// Supervisión data - evaluaciones recientes simuladas con datos reales
 const EVALUACIONES = [
   { id: 1, zona: "Baños P.B. Damas", evaluador: "Luis Ángel (Supervisor)", fecha: "06/02/2026 08:45", calif: 9, notas: "Excelente estado. Jaboneras llenas, pisos secos.", operario: "Soledad García" },
   { id: 2, zona: "Esclusas Entrada Principal", evaluador: "Luis Ángel (Supervisor)", fecha: "06/02/2026 09:30", calif: 7, notas: "Vidrios bien, falta aspirar tapetes de entrada.", operario: "Ana López" },
@@ -86,6 +85,20 @@ const INCIDENCIAS = [
   { id: "INC-002", tipo: "Limpieza", desc: "Derrame de líquido en pasillo de Electrodomésticos", zona: "1er Nivel - Electrodomésticos", reporta: "Ana López", fecha: "06/02/2026", status: "Resuelto", asignado: "Norma Laura Martínez", prioridad: "Alta" },
   { id: "INC-003", tipo: "Mantenimiento", desc: "Secador de manos baño clientes P.B. damas no funciona", zona: "Baños P.B. Damas", reporta: "Soledad García", fecha: "06/02/2026", status: "Abierto", asignado: "Pendiente", prioridad: "Alta" },
   { id: "INC-004", tipo: "Insumos", desc: "Jabón de manos agotado en entrada de personal", zona: "Entrada Personal", reporta: "Gaudencia Ruiz", fecha: "06/02/2026", status: "Resuelto", asignado: "Gaudencia Ruiz", prioridad: "Media" },
+];
+
+const ASIGNACIONES_ZONAS = [
+  { zona: "Baños P.B. y 1er Nivel", asignado: "Soledad García", status: "cubierta" },
+  { zona: "Oficinas y Crédito", asignado: "Ana López", status: "cubierta" },
+  { zona: "P.B. - That's It!, Hollister, AE, Levi's", asignado: "Norma Laura Martínez", status: "cubierta" },
+  { zona: "P.B. - Deportes, Zapato, Dockers", asignado: "Victoria Hernández", status: "cubierta" },
+  { zona: "P.B. - Petite, Studio F, Banana Republic", asignado: "Janeth Ramírez", status: "cubierta" },
+  { zona: "P.B. - Calvin Klein, Julio, Tommy Hilfiger", asignado: "Gaudencia Ruiz", status: "cubierta" },
+  { zona: "P.B. - Cosméticos, Perfumería + Andenes", asignado: "Marcos Vásquez", status: "cubierta" },
+  { zona: "P.B. - Joyería, Escaleras + Exteriores", asignado: "José Luis Santos", status: "cubierta" },
+  { zona: "Pulido 1er Nivel", asignado: "Uriel Díaz", status: "cubierta" },
+  { zona: "Pulido P.B.", asignado: "Carlos Rivera", status: "sin_cobertura" },
+  { zona: "Pulido P.B. + Mantenimiento", asignado: "Luis Ortega", status: "cubierta" },
 ];
 
 // ══════ COMPONENTS ══════
@@ -110,14 +123,59 @@ const ProgressBar = ({ value, max = 100, color = COLORS.green }) => (
   </div>
 );
 
+// ══════ FLOATING MODE TOGGLE ══════
+const FloatingToggle = ({ mode, onToggle }) => {
+  const [hovered, setHovered] = useState(false);
+  const isAdmin = mode === "admin";
+  const targetLabel = isAdmin ? "📋 Vista Supervisor" : "💼 Vista Admin";
+  const bgColor = isAdmin ? COLORS.blue : COLORS.accent;
+
+  return (
+    <div
+      onClick={onToggle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "fixed",
+        bottom: 24,
+        right: 24,
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: hovered ? "12px 20px" : "12px 16px",
+        background: bgColor,
+        color: "#FFF",
+        borderRadius: 50,
+        cursor: "pointer",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.3), 0 0 0 3px rgba(255,255,255,0.15)",
+        fontSize: 13,
+        fontWeight: 600,
+        transition: "all 0.3s ease",
+        transform: hovered ? "scale(1.05)" : "scale(1)",
+        whiteSpace: "nowrap",
+      }}
+    >
+      <span style={{ fontSize: 16 }}>🔄</span>
+      <span>{targetLabel}</span>
+    </div>
+  );
+};
+
 // ══════ MAIN APP ══════
 export default function SGRSerclinDemo() {
-  const [mode, setMode] = useState(null); // null = selector, "admin", "supervisor"
+  const [mode, setMode] = useState(null);
   const [section, setSection] = useState("dashboard");
-  const [isMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [selectedEval, setSelectedEval] = useState(null);
+
+  const handleToggleMode = () => {
+    const newMode = mode === "admin" ? "supervisor" : "admin";
+    setMode(newMode);
+    setSection("dashboard");
+    setSelectedPerson(null);
+    setSelectedEval(null);
+  };
 
   if (!mode) {
     return (
@@ -130,7 +188,7 @@ export default function SGRSerclinDemo() {
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
           {[
             { id: "admin", icon: "💼", title: "Vista Administrador", desc: "José Arnaud — Directorio, Dashboard, Reportes ejecutivos", color: COLORS.accent },
-            { id: "supervisor", icon: "📋", title: "Vista Supervisor", desc: "Luis Ángel — Rondas de evaluación, Incidencias, Operación diaria", color: COLORS.blue },
+            { id: "supervisor", icon: "📋", title: "Vista Supervisor", desc: "Luis Ángel — Pase de lista, Evaluación, Incidencias", color: COLORS.blue },
           ].map(m => (
             <button key={m.id} onClick={() => { setMode(m.id); setSection("dashboard"); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 16, padding: "32px 28px", width: 280, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.borderColor = m.color; }}
@@ -142,13 +200,13 @@ export default function SGRSerclinDemo() {
           ))}
         </div>
         <div style={{ marginTop: 48, padding: "12px 20px", background: "rgba(211,82,48,0.15)", borderRadius: 8, border: "1px solid rgba(211,82,48,0.3)" }}>
-          <span style={{ fontSize: 12, color: COLORS.accentLight }}>📊 Datos alimentados del Plan de Trabajo 2024 — 15 operarios, 2 turnos, 4 zonas principales</span>
+          <span style={{ fontSize: 12, color: COLORS.accentLight }}>📊 Datos alimentados del Plan de Trabajo 2024 — 14 operarios, 2 turnos, 4 zonas principales</span>
         </div>
       </div>
     );
   }
 
-  const navItems = mode === "admin" 
+  const navItems = mode === "admin"
     ? [
         { id: "dashboard", icon: "📊", label: "Dashboard" },
         { id: "directorio", icon: "👥", label: "Directorio" },
@@ -159,40 +217,39 @@ export default function SGRSerclinDemo() {
       ]
     : [
         { id: "dashboard", icon: "📊", label: "Mi Turno" },
+        { id: "paselista", icon: "📋", label: "Pase de Lista" },
+        { id: "zonas", icon: "📍", label: "Zonas" },
         { id: "supervision", icon: "✅", label: "Evaluar" },
         { id: "incidencias", icon: "⚠️", label: "Incidencias" },
-        { id: "operacion", icon: "🔄", label: "Programa" },
       ];
 
   const renderContent = () => {
-    switch(section) {
-      case "dashboard": return mode === "admin" ? <DashboardAdmin /> : <DashboardSupervisor />;
+    switch (section) {
+      case "dashboard": return mode === "admin" ? <DashboardAdmin /> : <DashboardSupervisor onGoTo={setSection} />;
       case "directorio": return <Directorio selectedPerson={selectedPerson} setSelectedPerson={setSelectedPerson} />;
       case "operacion": return <Operacion />;
       case "supervision": return <Supervision selectedEval={selectedEval} setSelectedEval={setSelectedEval} />;
       case "incidencias": return <Incidencias />;
       case "reportes": return <Reportes />;
-      default: return <DashboardAdmin />;
+      case "paselista": return <PaseDeLista />;
+      case "zonas": return <AsignacionZonas />;
+      default: return mode === "admin" ? <DashboardAdmin /> : <DashboardSupervisor onGoTo={setSection} />;
     }
   };
 
-  return (
-    <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
-      {/* TOP BAR */}
+  const appContent = (
+    <div style={{ minHeight: mode === "supervisor" ? "100%" : "100vh", background: COLORS.bg, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
       <div style={{ background: COLORS.primary, padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button onClick={() => setMode(null)} style={{ background: "none", border: "none", color: "#8A8AB0", cursor: "pointer", fontSize: 18, padding: 4 }}>←</button>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#FFF" }}>SGR <span style={{ color: COLORS.accent }}>SERCLIN</span></span>
+          <span style={{ fontSize: mode === "supervisor" ? 14 : 16, fontWeight: 700, color: "#FFF" }}>SGR <span style={{ color: COLORS.accent }}>SERCLIN</span></span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 11, color: "#8A8AB0" }}>{mode === "admin" ? "José Arnaud" : "Luis Ángel"}</span>
-          <div style={{ width: 32, height: 32, borderRadius: "50%", background: COLORS.accent, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>
+          <div style={{ width: 32, height: 32, borderRadius: "50%", background: mode === "admin" ? COLORS.accent : COLORS.blue, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#FFF" }}>
             {mode === "admin" ? "JA" : "LA"}
           </div>
         </div>
       </div>
-
-      {/* NAV */}
       <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, display: "flex", overflowX: "auto", padding: "0 8px" }}>
         {navItems.map(item => (
           <button key={item.id} onClick={() => { setSection(item.id); setSelectedPerson(null); setSelectedEval(null); }}
@@ -203,11 +260,38 @@ export default function SGRSerclinDemo() {
           </button>
         ))}
       </div>
-
-      {/* CONTENT */}
-      <div style={{ padding: "20px 16px", maxWidth: 1100, margin: "0 auto" }}>
+      <div style={{ padding: "20px 16px", maxWidth: mode === "supervisor" ? "100%" : 1100, margin: "0 auto", paddingBottom: mode === "supervisor" ? 20 : 80 }}>
         {renderContent()}
       </div>
+    </div>
+  );
+
+  if (mode === "admin") {
+    return (
+      <>
+        {appContent}
+        <FloatingToggle mode={mode} onToggle={handleToggleMode} />
+      </>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${COLORS.primary} 0%, #2A2A4E 100%)`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 16px", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <div style={{ fontSize: 13, letterSpacing: 3, color: COLORS.accentLight, textTransform: "uppercase", marginBottom: 8 }}>Vista Supervisor — Móvil</div>
+        <div style={{ fontSize: 24, fontWeight: 700, color: "#FFF" }}>📋 Luis Ángel — Liverpool Oaxaca</div>
+        <div style={{ fontSize: 13, color: "#8A8AB0", marginTop: 4 }}>Así se ve el sistema desde el celular del supervisor en tienda</div>
+      </div>
+      <div style={{ width: 375, maxWidth: "100%", borderRadius: 40, background: "#111", padding: "12px 12px 16px", boxShadow: "0 25px 80px rgba(0,0,0,0.5), 0 0 0 2px #333, inset 0 0 0 2px #222", position: "relative" }}>
+        <div style={{ width: 120, height: 28, background: "#111", borderRadius: 20, margin: "0 auto 4px", position: "relative", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#1a1a2e", border: "2px solid #222" }} />
+        </div>
+        <div style={{ borderRadius: 28, overflow: "hidden", height: 720, overflowY: "auto", background: COLORS.bg, WebkitOverflowScrolling: "touch" }}>
+          {appContent}
+        </div>
+        <div style={{ width: 134, height: 5, background: "#555", borderRadius: 10, margin: "10px auto 0" }} />
+      </div>
+      <FloatingToggle mode={mode} onToggle={handleToggleMode} />
     </div>
   );
 }
@@ -217,23 +301,20 @@ function DashboardAdmin() {
   const hoy = "Jueves 06 de Febrero, 2026";
   const descansoHoy = PERSONAL_REAL.filter(p => p.descanso === "Jueves");
   const activosHoy = PERSONAL_REAL.length - descansoHoy.length;
-  
+
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: COLORS.primary, margin: 0 }}>Dashboard Ejecutivo</h2>
         <p style={{ fontSize: 13, color: COLORS.textLight, margin: "4px 0 0" }}>{hoy} — Liverpool Oaxaca</p>
       </div>
-
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
         <StatCard icon="👥" value={activosHoy} label={`Operarios activos hoy (${descansoHoy.length} en descanso)`} color={COLORS.green} />
         <StatCard icon="✅" value="78%" label="Actividades completadas del turno matutino" color={COLORS.green} trend={5} />
         <StatCard icon="⭐" value="8.1" label="Calificación promedio supervisión" color={COLORS.blue} trend={3} />
         <StatCard icon="⚠️" value="2" label="Incidencias abiertas" color={COLORS.red} />
       </div>
-
-      {/* Who's off today */}
-      <div style={{ background: COLORS.yellowLight, borderRadius: 12, padding: 16, marginBottom: 20, border: `1px solid #F0D68A` }}>
+      <div style={{ background: COLORS.yellowLight, borderRadius: 12, padding: 16, marginBottom: 20, border: "1px solid #F0D68A" }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.primary, marginBottom: 8 }}>📅 Descansan hoy (Jueves):</div>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           {descansoHoy.map(p => (
@@ -243,8 +324,6 @@ function DashboardAdmin() {
           ))}
         </div>
       </div>
-
-      {/* Activity progress by zone */}
       <div style={{ background: COLORS.card, borderRadius: 12, padding: 20, border: `1px solid ${COLORS.border}`, marginBottom: 20 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.primary, margin: "0 0 16px" }}>Avance por zona — Turno Matutino</h3>
         {[
@@ -264,14 +343,12 @@ function DashboardAdmin() {
           </div>
         ))}
       </div>
-
-      {/* Recent evaluations */}
       <div style={{ background: COLORS.card, borderRadius: 12, padding: 20, border: `1px solid ${COLORS.border}` }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.primary, margin: "0 0 16px" }}>Últimas evaluaciones de supervisión</h3>
         {EVALUACIONES.slice(0, 4).map(e => (
           <div key={e.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: `1px solid ${COLORS.border}` }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", background: e.calif >= 8 ? COLORS.greenLight : e.calif >= 6 ? COLORS.yellowLight : COLORS.redLight,
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 700, 
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 700,
               color: e.calif >= 8 ? COLORS.green : e.calif >= 6 ? COLORS.yellow : COLORS.red, flexShrink: 0 }}>
               {e.calif}
             </div>
@@ -287,7 +364,7 @@ function DashboardAdmin() {
 }
 
 // ══════ DASHBOARD SUPERVISOR ══════
-function DashboardSupervisor() {
+function DashboardSupervisor({ onGoTo }) {
   const pendientes = [
     { hora: "15:00", actividad: "Revisión Baños Clientes 1er Nivel y P.B.", tipo: "Evaluación" },
     { hora: "16:30", actividad: "Revisión Baños Empleados 3er Nivel", tipo: "Evaluación" },
@@ -299,23 +376,39 @@ function DashboardSupervisor() {
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: COLORS.primary, margin: 0 }}>Mi Turno — Vespertino</h2>
-        <p style={{ fontSize: 13, color: COLORS.textLight, margin: "4px 0 0" }}>Jueves 06 Feb 2026 — Sonia (Baños + Supervisión)</p>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: COLORS.primary, margin: 0 }}>Mi Turno — Vespertino</h2>
+        <p style={{ fontSize: 12, color: COLORS.textLight, margin: "4px 0 0" }}>Jueves 06 Feb 2026 — Luis Ángel (Supervisor)</p>
       </div>
-
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
-        <StatCard icon="📋" value="3" label="Evaluaciones completadas" color={COLORS.green} />
-        <StatCard icon="⏳" value="5" label="Actividades pendientes hoy" color={COLORS.yellow} />
-        <StatCard icon="⚠️" value="1" label="Incidencia reportada" color={COLORS.red} />
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
+        <StatCard icon="👥" value="11/14" label="Asistencia hoy" color={COLORS.green} />
+        <StatCard icon="📋" value="3" label="Evaluaciones hechas" color={COLORS.blue} />
+        <StatCard icon="⚠️" value="1" label="Incidencia abierta" color={COLORS.red} />
       </div>
-
-      <div style={{ background: COLORS.card, borderRadius: 12, padding: 20, border: `1px solid ${COLORS.border}`, marginBottom: 20 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.primary, margin: "0 0 16px" }}>Programa restante del día</h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+        <div onClick={() => onGoTo("paselista")}
+          style={{ background: COLORS.card, borderRadius: 12, padding: 16, border: `1px solid ${COLORS.border}`, cursor: "pointer", transition: "all 0.15s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = COLORS.blue}
+          onMouseLeave={e => e.currentTarget.style.borderColor = COLORS.border}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>📋</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.primary }}>Pase de Lista</div>
+          <div style={{ fontSize: 11, color: COLORS.textLight, marginTop: 2 }}>Registrar asistencia</div>
+        </div>
+        <div onClick={() => onGoTo("zonas")}
+          style={{ background: COLORS.card, borderRadius: 12, padding: 16, border: `1px solid ${COLORS.border}`, cursor: "pointer", transition: "all 0.15s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = COLORS.blue}
+          onMouseLeave={e => e.currentTarget.style.borderColor = COLORS.border}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>📍</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.primary }}>Asignar Zonas</div>
+          <div style={{ fontSize: 11, color: COLORS.textLight, marginTop: 2 }}>Ver cobertura</div>
+        </div>
+      </div>
+      <div style={{ background: COLORS.card, borderRadius: 12, padding: 16, border: `1px solid ${COLORS.border}`, marginBottom: 20 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 600, color: COLORS.primary, margin: "0 0 12px" }}>Programa restante del día</h3>
         {pendientes.map((p, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < pendientes.length - 1 ? `1px solid ${COLORS.border}` : "none" }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.primary, width: 50 }}>{p.hora}</span>
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < pendientes.length - 1 ? `1px solid ${COLORS.border}` : "none" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.primary, width: 44 }}>{p.hora}</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, color: COLORS.text }}>{p.actividad}</div>
+              <div style={{ fontSize: 12, color: COLORS.text }}>{p.actividad}</div>
             </div>
             <Badge color={p.tipo === "Evaluación" ? COLORS.blue : p.tipo === "Break" ? COLORS.textLight : COLORS.green}
               bg={p.tipo === "Evaluación" ? COLORS.blueLight : p.tipo === "Break" ? "#F0F0F0" : COLORS.greenLight}>
@@ -324,10 +417,138 @@ function DashboardSupervisor() {
           </div>
         ))}
       </div>
-
-      <button style={{ width: "100%", padding: 16, background: COLORS.accent, color: "#FFF", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
+      <button style={{ width: "100%", padding: 14, background: COLORS.accent, color: "#FFF", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
         📋 Iniciar Nueva Evaluación
       </button>
+    </div>
+  );
+}
+
+// ══════ PASE DE LISTA (SUPERVISOR) ══════
+function PaseDeLista() {
+  const [statuses, setStatuses] = useState({});
+  const hoy = "Jueves";
+  const esperados = PERSONAL_REAL.filter(p => p.descanso !== hoy && p.turno === "Matutino");
+  const registrados = Object.keys(statuses).length;
+  const allDone = esperados.every(e => statuses[e.id]);
+  const presentes = Object.values(statuses).filter(s => s === "presente" || s === "retardo").length;
+  const faltas = Object.values(statuses).filter(s => s === "falta").length;
+  const retardos = Object.values(statuses).filter(s => s === "retardo").length;
+
+  const setStatus = (id, status) => {
+    setStatuses(prev => ({ ...prev, [id]: status }));
+  };
+
+  return (
+    <div>
+      <h2 style={{ fontSize: 20, fontWeight: 700, color: COLORS.primary, margin: "0 0 4px" }}>Pase de Lista</h2>
+      <p style={{ fontSize: 12, color: COLORS.textLight, margin: "0 0 16px" }}>Liverpool Oaxaca — Turno Matutino — Jueves 06 Feb</p>
+      <div style={{ background: COLORS.card, borderRadius: 12, padding: 14, border: `1px solid ${COLORS.border}`, marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+          <span style={{ fontSize: 12, color: COLORS.textLight }}>Registrados</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.primary }}>{registrados} de {esperados.length}</span>
+        </div>
+        <ProgressBar value={registrados} max={esperados.length} color={COLORS.blue} />
+        {registrados > 0 && (
+          <div style={{ display: "flex", gap: 12, marginTop: 8, fontSize: 11 }}>
+            <span style={{ color: COLORS.green }}>✓ {presentes} presentes</span>
+            {retardos > 0 && <span style={{ color: COLORS.yellow }}>⏱ {retardos} retardos</span>}
+            {faltas > 0 && <span style={{ color: COLORS.red }}>✕ {faltas} faltas</span>}
+          </div>
+        )}
+      </div>
+      {esperados.map(emp => (
+        <div key={emp.id} style={{ background: COLORS.card, borderRadius: 10, padding: 14, border: `1px solid ${statuses[emp.id] ? (statuses[emp.id] === "presente" ? COLORS.green : statuses[emp.id] === "retardo" ? COLORS.yellow : COLORS.red) : COLORS.border}`, marginBottom: 8, transition: "all 0.2s" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: COLORS.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{emp.foto}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: COLORS.primary }}>{emp.nombre} {emp.apellido}</div>
+              <div style={{ fontSize: 11, color: COLORS.textLight }}>{emp.rol}</div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {[
+              { value: "presente", label: "Presente", color: COLORS.green, bg: COLORS.greenLight },
+              { value: "retardo", label: "Retardo", color: COLORS.yellow, bg: COLORS.yellowLight },
+              { value: "falta", label: "Falta", color: COLORS.red, bg: COLORS.redLight },
+            ].map(opt => (
+              <div key={opt.value} onClick={() => setStatus(emp.id, opt.value)}
+                style={{
+                  flex: 1, padding: "10px 8px", borderRadius: 8, textAlign: "center", cursor: "pointer", transition: "all 0.2s",
+                  background: statuses[emp.id] === opt.value ? opt.bg : COLORS.bg,
+                  border: `2px solid ${statuses[emp.id] === opt.value ? opt.color : "transparent"}`,
+                }}>
+                <div style={{ fontSize: 12, fontWeight: 500, color: statuses[emp.id] === opt.value ? opt.color : COLORS.textLight }}>{opt.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <button
+        disabled={!allDone}
+        style={{
+          width: "100%", padding: 14, marginTop: 12,
+          background: allDone ? COLORS.green : COLORS.border,
+          color: allDone ? "#FFF" : COLORS.textLight,
+          border: "none", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: allDone ? "pointer" : "not-allowed",
+        }}>
+        {allDone ? `✓ Confirmar Pase de Lista (${presentes} presentes${faltas > 0 ? `, ${faltas} faltas` : ""})` : `Registra a los ${esperados.length - registrados} operarios restantes`}
+      </button>
+    </div>
+  );
+}
+
+// ══════ ASIGNACIÓN DE ZONAS (SUPERVISOR) ══════
+function AsignacionZonas() {
+  const faltaSimulada = PERSONAL_REAL.find(p => p.id === 13);
+
+  return (
+    <div>
+      <h2 style={{ fontSize: 20, fontWeight: 700, color: COLORS.primary, margin: "0 0 4px" }}>Asignación de Zonas</h2>
+      <p style={{ fontSize: 12, color: COLORS.textLight, margin: "0 0 16px" }}>Cobertura del turno matutino — Jueves 06 Feb</p>
+      <div style={{ background: COLORS.redLight, borderRadius: 12, padding: 14, border: `1px solid ${COLORS.red}40`, marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+          <span style={{ fontSize: 16 }}>⚠️</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.red }}>1 falta registrada</span>
+        </div>
+        <div style={{ fontSize: 12, color: COLORS.text }}>
+          {faltaSimulada.foto} <strong>{faltaSimulada.nombre} {faltaSimulada.apellido}</strong> ({faltaSimulada.rol}) — Zona sin cobertura: <strong>Pulido P.B.</strong>
+        </div>
+        <button style={{ marginTop: 10, padding: "8px 16px", background: COLORS.red, color: "#FFF", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+          🔄 Reasignar zona
+        </button>
+      </div>
+      {ASIGNACIONES_ZONAS.map((az, i) => {
+        const isMissing = az.status === "sin_cobertura";
+        return (
+          <div key={i} style={{
+            background: COLORS.card, borderRadius: 10, padding: 14,
+            border: `1px solid ${isMissing ? COLORS.red : COLORS.border}`,
+            borderLeft: `4px solid ${isMissing ? COLORS.red : COLORS.green}`,
+            marginBottom: 8,
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: COLORS.primary }}>{az.zona}</div>
+              <Badge color={isMissing ? COLORS.red : COLORS.green} bg={isMissing ? COLORS.redLight : COLORS.greenLight}>
+                {isMissing ? "Sin cobertura" : "Cubierta"}
+              </Badge>
+            </div>
+            <div style={{ fontSize: 12, color: isMissing ? COLORS.red : COLORS.textLight }}>
+              👤 {az.asignado} {isMissing && " — FALTA"}
+            </div>
+          </div>
+        );
+      })}
+      <div style={{ background: COLORS.blueLight, borderRadius: 12, padding: 14, border: "1px solid #90CAF9", marginTop: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.blue, marginBottom: 6 }}>📊 Resumen de cobertura</div>
+        <div style={{ display: "flex", gap: 16, fontSize: 12, color: COLORS.text }}>
+          <span>✅ {ASIGNACIONES_ZONAS.filter(a => a.status !== "sin_cobertura").length} zonas cubiertas</span>
+          <span style={{ color: COLORS.red }}>❌ {ASIGNACIONES_ZONAS.filter(a => a.status === "sin_cobertura").length} sin cobertura</span>
+        </div>
+        <div style={{ fontSize: 11, color: COLORS.textLight, marginTop: 6 }}>
+          Tip: Reasigna la zona de Carlos a un comodín o redistribuye entre operarios cercanos.
+        </div>
+      </div>
     </div>
   );
 }
@@ -335,7 +556,6 @@ function DashboardSupervisor() {
 // ══════ DIRECTORIO ══════
 function Directorio({ selectedPerson, setSelectedPerson }) {
   const [filter, setFilter] = useState("todos");
-
   if (selectedPerson) {
     const p = PERSONAL_REAL.find(x => x.id === selectedPerson);
     const totalDocs = Object.keys(p.docs).length;
@@ -377,9 +597,7 @@ function Directorio({ selectedPerson, setSelectedPerson }) {
       </div>
     );
   }
-
   const filtered = filter === "todos" ? PERSONAL_REAL : PERSONAL_REAL.filter(p => p.turno.toLowerCase() === filter);
-
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
@@ -423,12 +641,10 @@ function Directorio({ selectedPerson, setSelectedPerson }) {
 // ══════ OPERACIÓN ══════
 function Operacion() {
   const [selectedZone, setSelectedZone] = useState(null);
-  
   return (
     <div>
       <h2 style={{ fontSize: 22, fontWeight: 700, color: COLORS.primary, margin: "0 0 8px" }}>Programa de Operación</h2>
       <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 20px" }}>Zonas y actividades de Liverpool Oaxaca</p>
-
       {!selectedZone ? (
         <>
           {Object.entries(ZONAS_TIENDA).map(([zona, areas]) => (
@@ -448,7 +664,6 @@ function Operacion() {
               </div>
             </div>
           ))}
-
           <div style={{ background: COLORS.card, borderRadius: 12, padding: 20, border: `1px solid ${COLORS.border}`, marginTop: 20 }}>
             <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.primary, margin: "0 0 16px" }}>Catálogo de Actividades</h3>
             {Object.entries(ACTIVIDADES_REALES).map(([act, data]) => (
@@ -497,7 +712,7 @@ function Supervision({ selectedEval, setSelectedEval }) {
               <h3 style={{ margin: "0 0 4px", fontSize: 18, color: COLORS.primary }}>{e.zona}</h3>
               <div style={{ fontSize: 12, color: COLORS.textLight }}>{e.fecha} — {e.evaluador}</div>
             </div>
-            <div style={{ width: 56, height: 56, borderRadius: "50%", 
+            <div style={{ width: 56, height: 56, borderRadius: "50%",
               background: e.calif >= 8 ? COLORS.greenLight : e.calif >= 6 ? COLORS.yellowLight : COLORS.redLight,
               display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 700,
               color: e.calif >= 8 ? COLORS.green : e.calif >= 6 ? COLORS.yellow : COLORS.red }}>
@@ -519,18 +734,15 @@ function Supervision({ selectedEval, setSelectedEval }) {
       </div>
     );
   }
-
   return (
     <div>
       <h2 style={{ fontSize: 22, fontWeight: 700, color: COLORS.primary, margin: "0 0 8px" }}>Supervisión y Evaluaciones</h2>
       <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 20px" }}>Rondas de evaluación con calificación 1-10</p>
-
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
         <StatCard icon="⭐" value="8.1" label="Promedio general" color={COLORS.blue} />
         <StatCard icon="📋" value={EVALUACIONES.length} label="Evaluaciones hoy" color={COLORS.green} />
         <StatCard icon="📸" value={EVALUACIONES.length} label="Con fotoevidencia" color={COLORS.accent} />
       </div>
-
       {EVALUACIONES.map(e => (
         <div key={e.id} onClick={() => setSelectedEval(e.id)}
           style={{ background: COLORS.card, borderRadius: 10, padding: "14px 16px", border: `1px solid ${COLORS.border}`, marginBottom: 8,
@@ -557,12 +769,10 @@ function Supervision({ selectedEval, setSelectedEval }) {
 // ══════ INCIDENCIAS ══════
 function Incidencias() {
   const statusColors = { "Abierto": { c: COLORS.red, bg: COLORS.redLight }, "En proceso": { c: COLORS.yellow, bg: COLORS.yellowLight }, "Resuelto": { c: COLORS.green, bg: COLORS.greenLight } };
-  
   return (
     <div>
       <h2 style={{ fontSize: 22, fontWeight: 700, color: COLORS.primary, margin: "0 0 8px" }}>Incidencias</h2>
       <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 20px" }}>Seguimiento de reportes y mantenimiento</p>
-
       {INCIDENCIAS.map(inc => {
         const sc = statusColors[inc.status] || statusColors["Abierto"];
         return (
@@ -584,7 +794,6 @@ function Incidencias() {
           </div>
         );
       })}
-
       <button style={{ width: "100%", padding: 14, background: COLORS.accent, color: "#FFF", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
         + Reportar Nueva Incidencia
       </button>
@@ -598,7 +807,6 @@ function Reportes() {
     <div>
       <h2 style={{ fontSize: 22, fontWeight: 700, color: COLORS.primary, margin: "0 0 8px" }}>Reportes Ejecutivos</h2>
       <p style={{ fontSize: 13, color: COLORS.textLight, margin: "0 0 20px" }}>Informes semanales y métricas de desempeño</p>
-
       <div style={{ background: COLORS.card, borderRadius: 12, padding: 20, border: `1px solid ${COLORS.border}`, marginBottom: 16 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.primary, margin: "0 0 16px" }}>Resumen Semanal — Semana 6, 2026</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -617,7 +825,6 @@ function Reportes() {
           ))}
         </div>
       </div>
-
       <div style={{ background: COLORS.card, borderRadius: 12, padding: 20, border: `1px solid ${COLORS.border}`, marginBottom: 16 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: COLORS.primary, margin: "0 0 16px" }}>Top 5 Operarios — Por calificación</h3>
         {[
@@ -638,8 +845,7 @@ function Reportes() {
           </div>
         ))}
       </div>
-
-      <div style={{ background: COLORS.blueLight, borderRadius: 12, padding: 16, border: `1px solid #90CAF9` }}>
+      <div style={{ background: COLORS.blueLight, borderRadius: 12, padding: 16, border: "1px solid #90CAF9" }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.blue, marginBottom: 8 }}>💡 Este reporte puede compartirse con Liverpool</div>
         <div style={{ fontSize: 12, color: COLORS.text }}>Los reportes semanales se generan automáticamente y pueden enviarse por correo o consultarse desde el portal web, dando visibilidad total al cliente sobre la calidad del servicio de limpieza.</div>
       </div>
